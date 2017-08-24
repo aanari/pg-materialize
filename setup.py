@@ -1,7 +1,7 @@
 import os
 from setuptools import setup, find_packages
 
-version = '0.2.4'
+version = '0.2.5'
 
 description = 'Postgres Materialized View Dependency Manager'
 

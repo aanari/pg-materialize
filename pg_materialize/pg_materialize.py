@@ -72,13 +72,13 @@ def format_content(entity):
 
 
 @click.command()
-@click.option('-v', '--verbose', is_flag=True, help='Enables verbose logging')
-@click.option('-d', '--dry_run', is_flag=True, help='Analyze dependencies without generating output files')
-@click.option('-i', '--input_dir', default='.', help='Input directory for the analyzed Postgres SQL scripts')
-@click.option('-o', '--output_dir', default='.', help='Output directory for the generated creation and refresh scripts')
+@click.option('-d', '--dry-run', is_flag=True, help='Analyzes dependencies without actually generating the output files')
+@click.option('-i', '--input-dir', default='.', help='The directory for the PostgreSQL scripts to analyze')
+@click.option('-I', '--ignore-refresh', default='', help='Regex pattern to match when ignoring refresh on Materialized Views (i.e. "hist" for "users_mv_hist")')
+@click.option('-o', '--output-dir', default='.', help='Output directory for the generated creation and refresh scripts')
 @click.option('-p', '--pattern', default='_mv', help='Materialized View regex pattern to match (i.e. "_mv" for "users_mv")')
-@click.option('-I', '--ignore_refresh', default='', help='Regex pattern to match when ignoring refresh on Materialized Views (i.e. "hist" for "users_mv_hist")')
-def cli(verbose, dry_run, input_dir, output_dir, pattern, ignore_refresh):
+@click.option('-v', '--verbose', is_flag=True, help='Enables verbose logging')
+def cli(dry_run, input_dir, ignore_refresh, output_dir, pattern, verbose):
 
     file_paths = []
     dag = {}
