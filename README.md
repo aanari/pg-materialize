@@ -1,2 +1,3 @@
 # pg-materialize
-Postgres materialized view dependency tool
+
+Postgres Materialized View Dependency Manager
