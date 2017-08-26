@@ -1,7 +1,7 @@
 import os
 from setuptools import setup, find_packages
 
-version = '0.2.6'
+version = '0.2.7'
 
 description = 'Postgres Materialized View Dependency Manager'
 
@@ -34,19 +34,9 @@ setup(
     author_email='ali@anari.io',
     license='MIT',
     packages=find_packages('pg_materialize'),
-    include_package_data=True,
     package_dir={'': 'pg_materialize'},
     entry_points="""
         [console_scripts]
         pg_materialize = pg_materialize.pg_materialize:cli
-    """,
-    install_requires=[
-        'click',
-        'psqlparse==1.0rc5',
-        'pypandoc',
-        'Pygments',
-        'six',
-        'toolz',
-        'toposort'
-    ]
+    """
 )

@@ -1,0 +1,6 @@
+include *.txt
+include *.md
+recursive-include examples *.py *.csv *.json *.txt
+recursive-include doc *
+global-exclude .DS_Store
+global-exclude *.pyc

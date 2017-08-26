@@ -18,7 +18,7 @@ from toposort import toposort, toposort_flatten
 def pprint_color(obj):
     print highlight(pformat(obj), PythonLexer(), Terminal256Formatter())
 
-def extract_nodes(data, pattern):
+def extract_nodes(content, pattern):
     class NS(object):
         pass
     ns = NS()
@@ -43,7 +43,8 @@ def extract_nodes(data, pattern):
             for item in data:
                 inner(item, depth + 1)
 
-    inner(data, 0)
+    parsed_content = parse(content)
+    inner(parsed_content, 0)
     return {
         'views': ns.views,
         'dependencies': ns.dependencies - ns.views
@@ -53,8 +54,7 @@ def process_file(file_name, pattern):
     with open(file_name, 'r') as f:
         file_name = f.name
         content = f.read()
-        parsed_content = parse(content)
-        nodes = extract_nodes(parsed_content, pattern)
+        nodes = extract_nodes(content, pattern)
 
         return {
             'file_name': file_name,
