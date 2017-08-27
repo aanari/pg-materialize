@@ -1,3 +1,5 @@
+from __future__ import print_function
+
 import click
 import os
 import re
@@ -16,7 +18,7 @@ from toposort import toposort, toposort_flatten
 
 
 def pprint_color(obj):
-    print highlight(pformat(obj), PythonLexer(), Terminal256Formatter())
+    print(highlight(pformat(obj), PythonLexer(), Terminal256Formatter()))
 
 def extract_nodes(content, pattern):
     class NS(object):
@@ -88,7 +90,7 @@ def cli(dry_run, input_dir, ignore_refresh, output_dir, pattern, verbose):
             file_paths.append(os.path.join(root, file))
 
     if verbose:
-        print 'Found %d Scripts in %s' % (len(file_paths), input_dir)
+        print('Found %d Scripts in %s' % (len(file_paths), input_dir))
 
     entities = pipe(file_paths,
         map(lambda file_path: process_file(file_path, pattern)),
@@ -106,7 +108,7 @@ def cli(dry_run, input_dir, ignore_refresh, output_dir, pattern, verbose):
             map(count),
             sum
         )
-        print 'Identified %d Materialized Views, Containing %d View Dependencies' % (total_views, total_deps)
+        print('Identified %d Materialized Views, Containing %d View Dependencies' % (total_views, total_deps))
 
     view_content = {}
     dag = {}
@@ -121,7 +123,7 @@ def cli(dry_run, input_dir, ignore_refresh, output_dir, pattern, verbose):
     sorted_views = toposort_flatten(dag)
 
     if verbose:
-        print "\nMaterialized View Dependencies:"
+        print("\nMaterialized View Dependencies:")
         pprint_color(
             valmap(lambda val: list(val), valfilter(lambda val: val, dag))
         )
@@ -145,7 +147,7 @@ def cli(dry_run, input_dir, ignore_refresh, output_dir, pattern, verbose):
     )
 
     if verbose:
-        print 'Selecting %d Materialized Views for Refresh' % len(refresh_views)
+        print('Selecting %d Materialized Views for Refresh' % len(refresh_views))
 
     refresh_script = "\n\n".join([
         'BEGIN;',
@@ -154,7 +156,7 @@ def cli(dry_run, input_dir, ignore_refresh, output_dir, pattern, verbose):
     ])
 
     if dry_run:
-        print 'Dry Run Option Enabled - Skipping Script Generation'
+        print('Dry Run Option Enabled - Skipping Script Generation')
         return
 
     timestr = time.strftime("%Y%m%d-%H%M%S")
@@ -164,13 +166,13 @@ def cli(dry_run, input_dir, ignore_refresh, output_dir, pattern, verbose):
     with open(create_script_path, 'w') as f:
         f.write(create_script)
         if verbose:
-            print 'Successfully Saved Creation Script to %s' % create_script_path
+            print('Successfully Saved Creation Script to %s' % create_script_path)
 
     refresh_script_name = 'refresh-%s.sql' % timestr
     refresh_script_path = os.path.join(output_dir, refresh_script_name)
     with open(refresh_script_path, 'w') as f:
         f.write(refresh_script)
         if verbose:
-            print 'Successfully Saved Refresh Script to %s' % refresh_script_path
+            print('Successfully Saved Refresh Script to %s' % refresh_script_path)
 
     pprint_color('Process Complete!')
