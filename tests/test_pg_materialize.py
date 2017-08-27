@@ -1,6 +1,6 @@
 import unittest
 
-from pg_materialize.pg_materialize import extract_nodes
+from pg_materialize.pg_materialize import extract_nodes, format_content
 
 
 class PgMaterializeTest(unittest.TestCase):
@@ -61,3 +61,33 @@ class PgMaterializeTest(unittest.TestCase):
             'views': set(['schema1.messages_mv'])
         }
         self.assertEqual(actual, expected)
+
+
+    def test_format_content(self):
+
+        entity = {
+            'file_name': 'src/members.sql',
+            'content': """
+BEGIN;
+
+  CREATE MATERIALIZED VIEW public.members_mv
+    AS (
+      SELECT * FROM public.members LIMIT 1000;
+    );
+
+COMMIT;
+            """
+        }
+
+        actual = format_content(entity)
+        expected = """
+  -- src/members.sql
+
+
+  CREATE MATERIALIZED VIEW public.members_mv
+    AS (
+      SELECT * FROM public.members LIMIT 1000;
+    );
+        """
+
+        self.assertEqual(actual.strip(), expected.strip())
