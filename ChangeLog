@@ -1,6 +1,8 @@
 CHANGES
 =======
 
+* Release version 0.3.0
+* Resize and re-add logo as figure
 * Fix first PyPI badge in README
 * Force master branch on coveralls badge
 * Extracted serialize\_script method
