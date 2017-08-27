@@ -1,7 +1,7 @@
 pg_materialize
 ==============
 
-.. image: https://badge.fury.io/py/pg-materialize.svg
+.. image:: https://badge.fury.io/py/pg-materialize.svg
   :target: https://badge.fury.io/py/pg-materialize
 
 .. image:: https://travis-ci.org/aanari/pg-materialize.svg?branch=master
