@@ -1,0 +1,19 @@
+CHANGES
+=======
+
+* Fix first PyPI badge in README
+* Force master branch on coveralls badge
+* Extracted serialize\_script method
+* Extracted and added coverage for directory walking
+* Added coverage around process\_file
+* Remove pypi badge from README for now
+* Extracted, added test for generate\_script
+* Added test for format\_content
+* Drop Python 2.6 for now and add future import for print
+* Remove pypandoc from requirements
+* Moved from MD to RST with pbr tool
+* Implement test and tox framework
+* Improved Documentation significantly
+* Updated README and CLI params
+* Initial Implementation, Testing
+* Initial commit
