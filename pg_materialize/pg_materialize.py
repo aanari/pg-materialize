@@ -72,6 +72,14 @@ def format_content(entity):
         .replace('COMMIT;', '')
     return "  -- %s%s" % (file_name, content_no_txn)
 
+def generate_script(views, spacer=''):
+    return "\n\n".join([
+        'BEGIN;',
+        spacer.join(views),
+        'COMMIT;'
+    ])
+
+
 
 @click.command()
 @click.option('-d', '--dry-run', is_flag=True, help='Analyzes dependencies without actually generating the output files')
@@ -134,11 +142,7 @@ def cli(dry_run, input_dir, ignore_refresh, output_dir, pattern, verbose):
         list
     )
 
-    create_script = "\n\n".join([
-        'BEGIN;',
-        ''.join(create_views),
-        'COMMIT;'
-    ])
+    create_script = generate_script(create_views)
 
     refresh_views = pipe(sorted_views,
         filter(lambda view: re.search(pattern, view) and not (ignore_refresh and re.search(ignore_refresh , view))),
@@ -149,11 +153,7 @@ def cli(dry_run, input_dir, ignore_refresh, output_dir, pattern, verbose):
     if verbose:
         print('Selecting %d Materialized Views for Refresh' % len(refresh_views))
 
-    refresh_script = "\n\n".join([
-        'BEGIN;',
-        "\n\n".join(refresh_views),
-        'COMMIT;'
-    ])
+    refresh_script = generate_script(refresh_views, "\n\n")
 
     if dry_run:
         print('Dry Run Option Enabled - Skipping Script Generation')

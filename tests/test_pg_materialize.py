@@ -1,6 +1,6 @@
 import unittest
 
-from pg_materialize.pg_materialize import extract_nodes, format_content
+from pg_materialize.pg_materialize import extract_nodes, format_content, generate_script
 
 
 class PgMaterializeTest(unittest.TestCase):
@@ -88,6 +88,23 @@ COMMIT;
     AS (
       SELECT * FROM public.members LIMIT 1000;
     );
+        """
+
+        self.assertEqual(actual.strip(), expected.strip())
+
+
+    def test_generate_script(self):
+
+        views = ['  DEFINE_VIEW_1;', '  DEFINE_VIEW_2;', '  DEFINE_VIEW_3;']
+        actual = generate_script(views, "\n")
+        expected = """
+BEGIN;
+
+  DEFINE_VIEW_1;
+  DEFINE_VIEW_2;
+  DEFINE_VIEW_3;
+
+COMMIT;
         """
 
         self.assertEqual(actual.strip(), expected.strip())
