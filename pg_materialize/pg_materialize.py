@@ -86,6 +86,13 @@ def generate_script(views, spacer=''):
         'COMMIT;'
     ])
 
+def serialize_script(name, suffix, content, output_dir, verbose):
+    script_name = '%s-%s.sql' % (name, suffix)
+    script_path = os.path.join(output_dir, script_name)
+    with open(script_path, 'w') as f:
+        f.write(content)
+        if verbose:
+            print('Successfully saved "%s script" to "%s"' % (name, script_path))
 
 
 @click.command()
@@ -165,18 +172,7 @@ def cli(dry_run, input_dir, ignore_refresh, output_dir, pattern, verbose):
 
     timestr = time.strftime("%Y%m%d-%H%M%S")
 
-    create_script_name = 'create-%s.sql' % timestr
-    create_script_path = os.path.join(output_dir, create_script_name)
-    with open(create_script_path, 'w') as f:
-        f.write(create_script)
-        if verbose:
-            print('Successfully Saved Creation Script to %s' % create_script_path)
-
-    refresh_script_name = 'refresh-%s.sql' % timestr
-    refresh_script_path = os.path.join(output_dir, refresh_script_name)
-    with open(refresh_script_path, 'w') as f:
-        f.write(refresh_script)
-        if verbose:
-            print('Successfully Saved Refresh Script to %s' % refresh_script_path)
+    serialize_script('create', timestr, create_script, output_dir, verbose)
+    serialize_script('refresh', timestr, refresh_script, output_dir, verbose)
 
     pprint_color('Process Complete!')
