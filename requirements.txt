@@ -1,6 +1,5 @@
 click>=5.0,<7.0
 psqlparse==1.0rc5
-pypandoc
 Pygments
 six
 toolz
