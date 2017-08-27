@@ -7,8 +7,8 @@ pg_materialize
 .. image:: https://travis-ci.org/aanari/pg-materialize.svg?branch=master
   :target: https://travis-ci.org/aanari/pg-materialize
 
-.. image:: https://coveralls.io/repos/github/aanari/pg-materialize/badge.svg
-  :target: https://coveralls.io/github/aanari/pg-materialize
+.. image:: https://coveralls.io/repos/github/aanari/pg-materialize/badge.svg?branch=master
+  :target: https://coveralls.io/github/aanari/pg-materialize?branch=master
 
 ``pg_materialize`` is a utility for generating PostgreSQL creation and refresh scripts from a directory containing `Materialized View <https://www.postgresql.org/docs/9.6/static/rules-materializedviews.html>`_ SQL definitions. It uses `psqlparse <https://github.com/alculquicondor/psqlparse>`_ to transform the SQL into parse trees, identifies which Materialized Views have a dependency on other views by generating a DAG, and produces the correct order for constructing and refreshing these views. The source directory is traversed recursively, cross-schema views are handled correctly, and extraneous transaction syntax blocks are filtered out from the final output. The files from each subsequent run are timestamped with the suffix ``YYYYMMDD-HHMMSS.sql``.
 
