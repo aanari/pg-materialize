@@ -1,6 +1,6 @@
 import unittest
 
-from pg_materialize.pg_materialize import extract_nodes, format_content, generate_script
+from pg_materialize.pg_materialize import extract_nodes, format_content, generate_script, process_file
 
 
 class PgMaterializeTest(unittest.TestCase):
@@ -108,3 +108,13 @@ COMMIT;
         """
 
         self.assertEqual(actual.strip(), expected.strip())
+
+
+    def test_process_file(self):
+
+        expected = process_file('tests/fixtures/members.sql', '_mv')['views']
+        actual = set(['my_schema.members_mv'])
+        self.assertEqual(actual, expected)
+
+        with self.assertRaises(Exception):
+          process_file('tests/fixtures/invalid.sql', '_mv')
