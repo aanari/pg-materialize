@@ -1,6 +1,5 @@
 import unittest
-
-from pg_materialize.pg_materialize import extract_nodes, format_content, generate_script, process_file
+import pg_materialize.pg_materialize as pgm
 
 
 class PgMaterializeTest(unittest.TestCase):
@@ -28,7 +27,7 @@ class PgMaterializeTest(unittest.TestCase):
             COMMIT;
         """
     
-        actual = extract_nodes(query, '_mv')
+        actual = pgm.extract_nodes(query, '_mv')
         expected = {
             'dependencies': set(['schema3.log_mv', 'schema1.events_mv', 'schema2.members_mv']),
             'views': set(['schema1.messages_mv'])
@@ -55,7 +54,7 @@ class PgMaterializeTest(unittest.TestCase):
               )
         """
 
-        actual = extract_nodes(query, '_mv')
+        actual = pgm.extract_nodes(query, '_mv')
         expected = {
             'dependencies': set(['schema3.log_mv']),
             'views': set(['schema1.messages_mv'])
@@ -79,7 +78,7 @@ COMMIT;
             """
         }
 
-        actual = format_content(entity)
+        actual = pgm.format_content(entity)
         expected = """
   -- src/members.sql
 
@@ -96,7 +95,7 @@ COMMIT;
     def test_generate_script(self):
 
         views = ['  DEFINE_VIEW_1;', '  DEFINE_VIEW_2;', '  DEFINE_VIEW_3;']
-        actual = generate_script(views, "\n")
+        actual = pgm.generate_script(views, "\n")
         expected = """
 BEGIN;
 
@@ -112,9 +111,15 @@ COMMIT;
 
     def test_process_file(self):
 
-        expected = process_file('tests/fixtures/members.sql', '_mv')['views']
+        expected = pgm.process_file('tests/fixtures/members.sql', '_mv')['views']
         actual = set(['my_schema.members_mv'])
         self.assertEqual(actual, expected)
 
         with self.assertRaises(Exception):
-          process_file('tests/fixtures/invalid.sql', '_mv')
+          pgm.process_file('tests/fixtures/invalid.sql', '_mv')
+
+
+    def test_walk_directory_recursively(self):
+        expected = set(pgm.walk_directory_recursively('tests/fixtures'))
+        actual = set(['tests/fixtures/invalid.sql', 'tests/fixtures/members.sql'])
+        self.assertEqual(actual, expected)

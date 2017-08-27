@@ -52,6 +52,13 @@ def extract_nodes(content, pattern):
         'dependencies': ns.dependencies - ns.views
     }
 
+def walk_directory_recursively(input_dir):
+    file_paths = []
+    for root, _, files in os.walk(input_dir):
+        for file in files:
+            file_paths.append(os.path.join(root, file))
+    return file_paths
+
 def process_file(file_name, pattern):
     with open(file_name, 'r') as f:
         file_name = f.name
@@ -90,12 +97,9 @@ def generate_script(views, spacer=''):
 @click.option('-v', '--verbose', is_flag=True, help='Enables verbose logging')
 def cli(dry_run, input_dir, ignore_refresh, output_dir, pattern, verbose):
 
-    file_paths = []
     dag = {}
 
-    for root, _, files in os.walk(input_dir):
-        for file in files:
-            file_paths.append(os.path.join(root, file))
+    file_paths = walk_directory_recursively(input_dir)
 
     if verbose:
         print('Found %d Scripts in %s' % (len(file_paths), input_dir))
