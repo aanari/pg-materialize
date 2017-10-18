@@ -79,12 +79,12 @@ def format_content(entity):
         .replace('COMMIT;', '')
     return "  -- %s%s" % (file_name, content_no_txn)
 
-def generate_script(views, spacer=''):
-    return "\n\n".join([
-        'BEGIN;',
-        spacer.join(views),
-        'COMMIT;'
-    ])
+def generate_script(views, transaction, spacer=''):
+    lines = [ spacer.join(views) ]
+    if transaction:
+        lines.insert(0, 'BEGIN;')
+        lines.append('COMMIT;')
+    return "\n\n".join(lines)
 
 def serialize_script(name, suffix, content, output_dir, verbose):
     script_name = '%s-%s.sql' % (name, suffix)
@@ -102,7 +102,8 @@ def serialize_script(name, suffix, content, output_dir, verbose):
 @click.option('-o', '--output-dir', default='.', help='Output directory for the generated creation and refresh scripts')
 @click.option('-p', '--pattern', default='_m?v', help='View regex pattern to match (i.e. "_m?v" for both "users_mv_hist" and "users_v")')
 @click.option('-v', '--verbose', is_flag=True, help='Enables verbose logging')
-def cli(dry_run, input_dir, ignore_refresh, output_dir, pattern, verbose):
+@click.option('-t', '--transaction', is_flag=True, help='Enables transaction wrapping around refresh')
+def cli(dry_run, input_dir, ignore_refresh, output_dir, pattern, verbose, transaction):
 
     dag = {}
 
@@ -153,18 +154,21 @@ def cli(dry_run, input_dir, ignore_refresh, output_dir, pattern, verbose):
         list
     )
 
-    create_script = generate_script(create_views)
+    create_script = generate_script(create_views, transaction)
 
+    refresh_prefix = 'REFRESH MATERIALIZED VIEW CONCURRENTLY '
+    if transaction:
+        refresh_prefix = '  ' + refresh_prefix
     refresh_views = pipe(sorted_views,
         filter(lambda view: re.search(pattern, view) and not (ignore_refresh and re.search(ignore_refresh , view))),
-        map(lambda view: '  REFRESH MATERIALIZED VIEW CONCURRENTLY ' + view + ';'),
+        map(lambda view: refresh_prefix + view + ';'),
         list
     )
 
     if verbose:
         print('Selecting %d Materialized Views for Refresh' % len(refresh_views))
 
-    refresh_script = generate_script(refresh_views, "\n\n")
+    refresh_script = generate_script(refresh_views, transaction, "\n\n")
 
     if dry_run:
         print('Dry Run Option Enabled - Skipping Script Generation')

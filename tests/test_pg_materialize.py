@@ -95,7 +95,7 @@ COMMIT;
     def test_generate_script(self):
 
         views = ['  DEFINE_VIEW_1;', '  DEFINE_VIEW_2;', '  DEFINE_VIEW_3;']
-        actual = pgm.generate_script(views, "\n")
+        actual = pgm.generate_script(views, True, "\n")
         expected = """
 BEGIN;
 
@@ -104,6 +104,17 @@ BEGIN;
   DEFINE_VIEW_3;
 
 COMMIT;
+        """
+
+        self.assertEqual(actual.strip(), expected.strip())
+
+        actual = pgm.generate_script(views, False, "\n")
+        expected = """
+
+  DEFINE_VIEW_1;
+  DEFINE_VIEW_2;
+  DEFINE_VIEW_3;
+
         """
 
         self.assertEqual(actual.strip(), expected.strip())
