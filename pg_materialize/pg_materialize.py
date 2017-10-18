@@ -98,9 +98,9 @@ def serialize_script(name, suffix, content, output_dir, verbose):
 @click.command()
 @click.option('-d', '--dry-run', is_flag=True, help='Analyzes dependencies without actually generating the output files')
 @click.option('-i', '--input-dir', default='.', help='The directory for the PostgreSQL scripts to analyze')
-@click.option('-I', '--ignore-refresh', default='', help='Regex pattern to match when ignoring refresh on Materialized Views (i.e. "hist" for "users_mv_hist")')
+@click.option('-I', '--ignore-refresh', default='_v|hist', help='Regex pattern to match when ignoring refresh on Materialized Views (i.e. "_v|hist" for both "users_mv_hist" and "users_v")')
 @click.option('-o', '--output-dir', default='.', help='Output directory for the generated creation and refresh scripts')
-@click.option('-p', '--pattern', default='_mv', help='Materialized View regex pattern to match (i.e. "_mv" for "users_mv")')
+@click.option('-p', '--pattern', default='_m?v', help='View regex pattern to match (i.e. "_m?v" for both "users_mv_hist" and "users_v")')
 @click.option('-v', '--verbose', is_flag=True, help='Enables verbose logging')
 def cli(dry_run, input_dir, ignore_refresh, output_dir, pattern, verbose):
 
@@ -174,5 +174,3 @@ def cli(dry_run, input_dir, ignore_refresh, output_dir, pattern, verbose):
 
     serialize_script('create', timestr, create_script, output_dir, verbose)
     serialize_script('refresh', timestr, refresh_script, output_dir, verbose)
-
-    pprint_color('Process Complete!')
